@@ -1,1 +1,1 @@
-# RestaurantMobileApp
+This React Native application, designed with TypeScript, serves as a mobile solution for restaurants aiming to enhance their customer experience. Featuring a sleek navigation structure built with "@react-navigation/native", it includes dedicated screens for viewing the Menu, making Reservations, and placing Orders. Perfect for restaurant owners looking to digitize their services and for customers seeking convenience right at their fingertips.
