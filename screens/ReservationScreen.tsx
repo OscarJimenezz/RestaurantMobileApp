@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, TextInput, Button, StyleSheet, Text } from 'react-native';
 import axios from 'axios';
 
@@ -6,7 +6,7 @@ interface ReservationFormState {
   name: string;
   date: string;
   time: string;
-  partySize: number;
+  partySize: string; // Changed to string to optimize TextInput handling
   contactInfo: string;
 }
 
@@ -15,17 +15,23 @@ const ReservationForm: React.FC = () => {
     name: '',
     date: '',
     time: '',
-    partySize: 1,
+    partySize: '1', // Changed to string
     contactInfo: '',
   });
 
-  const handleChange = (name: string, value: string) => {
-    setFormData({ ...formData, [name]: value });
-  };
+  // Use useCallback to prevent unnecessary function recreation
+  const handleChange = useCallback((name: string, value: string) => {
+    setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+  }, []);
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/reservations`, formData);
+      // Convert partySize back to number before sending
+      const submissionData = {
+        ...formData,
+        partySize: parseInt(formData.partySize, 10),
+      };
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/reservations`, submissionData);
       alert('Reservation successful');
     } catch (error) {
       console.error('Error making reservation:', error);
@@ -57,7 +63,7 @@ const ReservationForm: React.FC = () => {
         style={styles.input}
         placeholder="Party Size"
         keyboardType="numeric"
-        value={formData.partySize.toString()}
+        value={formData.partySize}
         onChangeText={(text) => handleChange('partySize', text.replace(/[^0-9]/g, ''))}
       />
       <TextInput
