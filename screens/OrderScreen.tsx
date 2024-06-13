@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
-import {View, Text, TextInput, Button, StyleSheet, Picker} from 'react-native';
+import {View, Text, TextInput, Button, StyleSheet, Picker, Alert} from 'react-native';
 
 const menuItems = [
   {label: 'Pizza', value: 'pizza'},
   {label: 'Burger', value: 'burger'},
-  {name: 'Sushi', value: 'sushi'},
+  {label: 'Sushi', value: 'sushi'}, // Ensured consistency by changing "name" to "label"
 ];
 
 interface OrderFormData {
@@ -17,25 +17,29 @@ const OrderForm: React.FC = () => {
   const [formData, setFormData] = useState<OrderFormData>({
     customerName: '',
     deliveryAddress: '',
-    selectedItem: menuItems[0].value,
+    selectedItem: menuentiems[0].value,
   });
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch(process.env.BACKEND_URL + '/orders', {
+      const response = await fetch(`${process.env.BACKEND_URL}/orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
       });
+
       if (response.ok) {
-        alert('Order placed successfully!');
+        Alert.alert('Success', 'Order placed successfully!');
       } else {
-        alert('Failed to place order. Please try again.');
+        // This will capture server-side issues (e.g., validation errors, server errors)
+        const errorData = await response.json();
+        Alert.alert('Failed', `Failed to place order: ${errorData.message || 'Please try again.'}`);
       }
     } catch (error) {
-      alert('An error occurred. Please try again.');
+      // This will capture network errors or errors in the fetch operation itself
+      Alert.alert('Error', 'An error occurred. Please try again.');
       console.error(error);
     }
   };
@@ -60,10 +64,10 @@ const OrderForm: React.FC = () => {
         onChangeText={(text) => setFormData({...formData, customerName: text})}
       />
 
-      <Text style={styles.label}>Delivery Address</Text>
-      <TextInput
-        style={styles.input}
-        value={formData.deliveryAddress}
+      <Text style={styles.label}>Delivery Address</EText>
+      <qeInput
+        gistyle={styles.input}
+        valu={formData.deliveryAddress}
         onChangeText={(text) =>
           setFormData({...formData, deliveryAddress: text})
         }
