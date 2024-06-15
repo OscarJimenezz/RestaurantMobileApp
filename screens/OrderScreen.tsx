@@ -1,10 +1,10 @@
-import React, {useState} from 'react';
-import {View, Text, TextInput, Button, StyleSheet, Picker, Alert} from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, Button, StyleSheet, Picker, Alert } from 'react-native';
 
 const menuItems = [
-  {label: 'Pizza', value: 'pizza'},
-  {label: 'Burger', value: 'burger'},
-  {label: 'Sushi', value: 'sushi'}, // Ensured consistency by changing "name" to "label"
+  { label: 'Pizza', value: 'pizza' },
+  { label: 'Burger', value: 'burger' },
+  { label: 'Sushi', value: 'sushi' }, 
 ];
 
 interface OrderFormData {
@@ -17,10 +17,23 @@ const OrderForm: React.FC = () => {
   const [formData, setFormData] = useState<OrderFormData>({
     customerName: '',
     deliveryAddress: '',
-    selectedItem: menuentiems[0].value,
+    selectedItem: menuItems[0].value // Fixed typo here
   });
 
+  const validateForm = () => {
+    if (!formData.customerName) return 'Please enter your name.';
+    if (!formData.deliveryAddress) return 'Please enter your delivery address.';
+    // Add additional validations as needed
+    return '';
+  };
+
   const handleSubmit = async () => {
+    const validationError = validateForm();
+    if (validationError !== '') {
+      Alert.alert('Validation Error', validationError);
+      return;
+    }
+    
     try {
       const response = await fetch(`${process.env.BACKEND_URL}/orders`, {
         method: 'POST',
@@ -33,12 +46,10 @@ const OrderForm: React.FC = () => {
       if (response.ok) {
         Alert.alert('Success', 'Order placed successfully!');
       } else {
-        // This will capture server-side issues (e.g., validation errors, server errors)
         const errorData = await response.json();
         Alert.alert('Failed', `Failed to place order: ${errorData.message || 'Please try again.'}`);
       }
     } catch (error) {
-      // This will capture network errors or errors in the fetch operation itself
       Alert.alert('Error', 'An error occurred. Please try again.');
       console.error(error);
     }
@@ -50,7 +61,7 @@ const OrderForm: React.FC = () => {
       <Picker
         selectedValue={formData.selectedItem}
         onValueChange={(itemValue) =>
-          setFormData({...formData, selectedItem: itemValue})
+          setFormData({ ...formData, selectedItem: itemValue })
         }>
         {menuItems.map((item) => (
           <Picker.Item label={item.label} value={item.value} key={item.value} />
@@ -61,15 +72,15 @@ const OrderForm: React.FC = () => {
       <TextInput
         style={styles.input}
         value={formData.customerName}
-        onChangeText={(text) => setFormData({...formData, customerName: text})}
+        onChangeText={(text) => setFormData({ ...formData, customerName: text })}
       />
 
-      <Text style={styles.label}>Delivery Address</EText>
-      <qeInput
-        gistyle={styles.input}
-        valu={formData.deliveryAddress}
+      <Text style={styles.label}>Delivery Address</Text>
+      <TextInput // Fixed this line
+        style={styles.input}
+        value={formData.deliveryAddress}
         onChangeText={(text) =>
-          setFormData({...formData, deliveryAddress: text})
+          setFormData({ ...formData, deliveryAddress: text })
         }
       />
 
