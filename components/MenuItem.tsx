@@ -1,64 +1,70 @@
 import React from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 
-interface MenuItemProps {
+interface MenuItemDetails {
   name: string;
   description: string;
   price: number;
   category: string;
-  imageUrl?: string; // Optional imageUrl property
+  imageUrl?: string;
 }
 
-const MenuItem: React.FC<MenuItemProps> = ({name, description, price, category, imageUrl}) => {
+const MenuItemCard: React.FC<MenuItemDetails> = ({
+  name,
+  description,
+  price,
+  category,
+  imageUrl,
+}) => {
   return (
-    <View style={styles.container}>
-      {imageUrl && <Image source={{uri: imageUrl}} style={styles.image} />} {/* Display the image if imageUrl is provided */}
-      <View style={styles.textContainer}>
-        <Text style={styles.name}>{name}</Text>
-        <Text style={styles.description}>{description}</Text>
-        <Text style={styles.price}>{`$${price.toFixed(2)}`}</Text>
-        <Text style={styles.category}>{category}</Text>
+    <View style={styles.cardContainer}>
+      {imageUrl && <Image source={{ uri: imageUrl }} style={styles.menuItemImage} />}
+      <View style={styles.textBlock}>
+        <Text style={styles.itemName}>{name}</Text>
+        <Text style={styles.itemDescription}>{description}</Text>
+        <Text style={styles.itemPrice}>{`$${price.toFixed(2)}`}</Text>
+        <Text style={styles.itemCategory}>{category}</Text>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row', // Adjust layout to accommodate image
+  cardContainer: {
+    flexDirection: 'row',
     padding: 20,
     marginBottom: 10,
     backgroundColor: '#f9f9f9',
     borderRadius: 8,
-    alignItems: 'center', // Align items in the center vertically
+    alignItems: 'center',
   },
-  textContainer: {
-    flex: 1, // Take up remaining space after image
+  textBlock: {
+    flex: 1,
   },
-  image: {
-    width: 60, // Set image width
-    height: 60, // Set image height
-    borderRadius: 30, // Make the image round
-    marginRight: 20, // Space between image and text
+  menuItemImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    marginRight: 20,
   },
-  name: {
+  itemName: {
     fontSize: 18,
     fontWeight: 'bold',
   },
-  description: {
+  itemDescription: {
     fontSize: 14,
     color: '#666',
   },
-  price: {
+  itemPrice: {
     fontSize: 16,
     color: '#333',
     marginTop: 5,
   },
-  category: {
+  itemCategory: {
     fontSize: 14,
     color: '#007bff',
     marginTop: 5,
   },
 });
 
-export default MenuItem;
+export default MenuItemCard;
