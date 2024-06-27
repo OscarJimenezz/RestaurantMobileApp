@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 
 interface ReservationFormState {
   name: string;
   date: string;
   time: string;
-  partySize: number;
+  partySize: string; // Changed to string to handle input directly
   contactInfo: string;
 }
 
@@ -14,17 +14,19 @@ export const ReservationForm = () => {
     name: '',
     date: '',
     time: '',
-    partySize: 1,
+    partySize: '1', // Changed to a string to match the input type
     contactInfo: '',
   });
 
-  const handleInputChange = (inputName: keyof ReservationFormState, value: string) => {
-    setFormData({ ...formData, [inputName]: value });
-  };
+  const handleInputChange = useCallback((inputName: keyof ReservationFormState, value: string) => {
+    setFormData(prevFormData => ({ ...prevFormData, [inputName]: value }));
+  }, []);
 
-  const handleSubmit = () => {
-    console.log('Form data submitted:', formData);
-  };
+  const handleSubmit = useCallback(() => {
+    const submissionData = { ...formData, partySize: parseInt(formData.partySize, 10) || 1 };
+    console.log('Form data submitted:', submissionData);
+    // Here, before final submission or further process, convert partySize back to number if necessary
+  }, [formData]);
 
   return (
     <View style={styles.container}>
@@ -55,8 +57,8 @@ export const ReservationForm = () => {
         style={styles.input}
         placeholder="Party Size"
         keyboardType="number-pad"
-        value={formData.partySize.toString()}
-        onChangeText={(add) => handleInputChange('partySize', value)}
+        value={formData.partySize}
+        onChangeText={(value) => handleInputChange('partySize', value)}
       />
       
       <TextInput
