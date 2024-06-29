@@ -1,32 +1,34 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 
-interface ReservationFormState {
-  name: string;
-  date: string;
-  time: string;
-  partySize: string; // Changed to string to handle input directly
-  contactInfo: string;
+interface ReservationDetails {
+  customerName: string;
+  reservationDate: string;
+  reservationTime: string;
+  numberOfGuests: string;
+  contactInformation: CalculatedNameType;
 }
 
 export const ReservationForm = () => {
-  const [formData, setFormData] = useState<ReservationFormState>({
-    name: '',
-    date: '',
-    time: '',
-    partySize: '1', // Changed to a string to match the input type
-    contactInfo: '',
+  const [reservationData, setReservationData] = useState<ReservationDetails>({
+    customerName: '',
+    reservationDate: '',
+    reservationTime: '',
+    numberOfGuests: '1',
+    contactInformation: '',
   });
 
-  const handleInputChange = useCallback((inputName: keyof ReservationFormState, value: string) => {
-    setFormData(prevFormData => ({ ...prevFormData, [inputName]: value }));
+  const updateReservationData = useCallback((detailKey: keyof ReservationDetails, detailValue: string) => {
+    setReservationData(previousData => ({ ...previousData, [detailKey]: detailValue }));
   }, []);
 
-  const handleSubmit = useCallback(() => {
-    const submissionData = { ...formData, partySize: parseInt(formData.partySize, 10) || 1 };
-    console.log('Form data submitted:', submissionData);
-    // Here, before final submission or further process, convert partySize back to number if necessary
-  }, [formData]);
+  const submitReservation = useCallback(() => {
+    const formattedSubmissionData = {
+      ...reservationData, 
+      numberOfGuests: parseInt(reservationData.numberOfGuests, 10) || 1 
+    };
+    console.log('Reservation data submitted:', formattedSubmissionData);
+  }, [reservationData]);
 
   return (
     <View style={styles.container}>
@@ -35,40 +37,40 @@ export const ReservationForm = () => {
       <TextInput
         style={styles.input}
         placeholder="Name"
-        value={formData.name}
-        onChangeText={(value) => handleInputChange('name', value)}
+        value={reservationData.customerName}
+        onChangeText={(newValue) => updateReservationData('customerName', newValue)}
       />
       
       <TextInput
         style={styles.input}
         placeholder="Date (YYYY-MM-DD)"
-        value={formData.date}
-        onChangeText={(value) => handleInputChange('date', value)}
+        value={reservationData.reservationDate}
+        onChangeText={(newValue) => updateReservationData('reservationDate', newValue)}
       />
       
       <TextInput
         style={styles.input}
         placeholder="Time (HH:MM)"
-        value={formData.time}
-        onChangeText={(value) => handleInputChange('time', value)}
+        value={reservationData.reservationTime}
+        onChangeText={(newValue) => updateReservationData('reservationTime', newValue)}
       />
       
       <TextInput
         style={styles.input}
         placeholder="Party Size"
         keyboardType="number-pad"
-        value={formData.partySize}
-        onChangeText={(value) => handleInputChange('partySize', value)}
+        value={reservationData.numberOfGuests}
+        onChangeText={(newValue) => updateReservationData('numberOfGuests', newValue)}
       />
       
       <TextInput
         style={styles.input}
         placeholder="Contact Info"
-        value={formData.contactInfo}
-        onChangeText={(value) => handleInputChange('contactInfo', value)}
+        value={reservationData.contactInformation}
+        onChangeText={(newValue) => updateReservationData('contactInformation', newValue)}
       />
       
-      <Button title="Submit" onPress={handleSubmit} />
+      <Button title="Submit" onPress={submitData} />
     </View>
   );
 };
