@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react'; // Importing useCallback
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 
 interface OrderFormValues {
@@ -8,22 +8,23 @@ interface OrderFormValues {
 }
 
 const OrderForm: React.FC = () => {
-  const [formValues, setFormValues] = useState<OrderFormValues>({
+  const [formValues, setFormViews] = useState<OrderFormValues>({
     customerName: '',
-    deliveryAddress: '',
+    deliveryContent: '',
     menuItem: '',
   });
 
-  const handleInputChange = (field: keyof OrderFormValues, value: string) => {
-    setFormValues({
-      ...formValues,
+  // Now using useCallback to memoize the function to avoid recreating it on every render
+  const handleInputChange = useCallback((field: keyof OrderFormValues, value: string) => {
+    setFormValues((currentValues) => ({
+      ...currentValues,
       [field]: value,
-    });
-  };
+    }));
+  }, []);
 
-  const handleSubmit = () => {
-    Alert.alert('Order Submitted', `Thank you, ${formValues.customerName}! Your order for ${formArray.menuItem} will be delivered to ${formValues.deliveryAddress}.`);
-  };
+  const handleSubmit = useCallback(() => {
+    Alert.alert('Order Submitted', `Thank you, ${formValues.customerName}! Your order for ${formValues.menuItem} will be delivered to ${formValues.deliveryAddress}.`);
+  }, [formValues]); // Also memoized with useCallback and added formValues as a dependency
 
   return (
     <View style={styles.container}>
