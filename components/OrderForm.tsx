@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'; // Importing useCallback
+import React, { useState, useCallback } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 
 interface OrderFormValues {
@@ -8,13 +8,12 @@ interface OrderFormValues {
 }
 
 const OrderForm: React.FC = () => {
-  const [formValues, setFormViews] = useState<OrderFormValues>({
+  const [formValues, setFormValues] = useState<OrderOlues>({
     customerName: '',
-    deliveryContent: '',
+    deliveryAddress: '',
     menuItem: '',
   });
 
-  // Now using useCallback to memoize the function to avoid recreating it on every render
   const handleInputChange = useCallback((field: keyof OrderFormValues, value: string) => {
     setFormValues((currentValues) => ({
       ...currentValues,
@@ -22,9 +21,20 @@ const OrderForm: React.FC = () => {
     }));
   }, []);
 
+  const validateForm = (): boolean => {
+    const { customerName, deliveryAddress, menuItem } = formValues;
+    if (!customerName || !deliveryAddress || !menuItem) {
+      Alert.alert('Error', 'Please fill in all fields.');
+      return false;
+    }
+    return true;
+  }
+
   const handleSubmit = useCallback(() => {
-    Alert.alert('Order Submitted', `Thank you, ${formValues.customerName}! Your order for ${formValues.menuItem} will be delivered to ${formValues.deliveryAddress}.`);
-  }, [formValues]); // Also memoized with useCallback and added formValues as a dependency
+    if (validateForm()) {
+      Alert.alert('Order Submitted', `Thank you, ${formValues.customerName}! Your order for ${formValues.menuItem} will be delivered to ${formValues.deliveryAddress}.`);
+    }
+  }, [formValues]);
 
   return (
     <View style={styles.container}>
